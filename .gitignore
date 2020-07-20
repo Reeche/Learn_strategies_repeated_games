@@ -1,0 +1,12 @@
+venv/
+backup/
+notes.md
+*.pyc
+.idea
+.idea/
+.idea/*
+__pycache__
+*/__pycache__
+__pycache__/*
+*.pth
+.pytest_cache

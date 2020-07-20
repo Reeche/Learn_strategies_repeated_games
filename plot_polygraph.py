@@ -1,10 +1,10 @@
 import matplotlib.pyplot as plt
 import random
 import numpy as np
-from environment import *
+from env import *
 
 # choose the environment
-env = ipd()
+env = IPD()
 
 
 #p_x = [0.9269, 0.0129, 0.0502, 0.0416]

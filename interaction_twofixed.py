@@ -1,6 +1,6 @@
 import numpy as np
 from helper import *
-from environment import *
+from env import *
 from random import choices
 
 # 1 is cooperate, 0 is defect

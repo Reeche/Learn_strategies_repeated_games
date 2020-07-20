@@ -15,42 +15,54 @@ from interaction import interaction
 
 def main():
     for _ in range(number_of_episodes):
+        x_action = np.random.randint(2)
+        y_action = np.random.randint(2)
+        init_state = env.get_state_id(x_action, y_action)
+
         for _ in range(length_of_episode):
             # Input the state into the Actor to generate a policy
             generated_policy = Actor_class.forward(torch.FloatTensor([init_state]))
 
             # Input policy of Actor into Critic to predict a score
             predicted_reward = Critic_class.forward(generated_policy)
-            Critic_class.saved_rewards.append(predicted_reward)
 
-            # Actor save the policy and corresponding reward
-            # Actor_class.saved_actions.append(generated_policy, predicted_reward)
+            # Actor save the policy and corresponding predicted value
             Actor_class.saved_actions.append(SavedAction(generated_policy, predicted_reward))
 
             # Training
+            R = 0
             saved_actions = Actor_class.saved_actions
             policy_losses = []  # list to save actor (policy) loss
             value_losses = []  # list to save critic (value) loss
             returns = []  # list to save the true values
 
             # calculate the true value using rewards returned from the environment
-            true_reward_x, true_reward_y = interaction(init_state, Q_class, env, generated_policy)
+            true_reward_x, _ = interaction(init_state, Q_class, env, generated_policy)
+
+            # Critic observes the actual reward and saves them
+            Critic_class.saved_rewards.append(torch.tensor([true_reward_x]))
+
             for r in Critic_class.saved_rewards[::-1]:
+                # for i in range(len(Critic_class.saved_rewards)):
                 # calculate the discounted value
-                true_reward_x = r + gamma * true_reward_x
-                returns.insert(0, true_reward_x)
+                R = r + gamma * R
+                # print("R", R)
+                returns.insert(0, torch.tensor(R, dtype=torch.float))
 
             returns = torch.tensor(returns)
-            returns = (returns - returns.mean()) / (returns.std() + eps)
+            # if len(returns) > 1:  # to avoid std of 1 value
+            #     returns = (returns - returns.mean()) / (returns.std())
+            # print(returns)
 
-            for (log_prob, value), true_reward_x in zip(saved_actions, returns):
-                advantage = true_reward_x - value.item()
+            for (log_prob, predicted_value), R in zip(saved_actions, returns):  # (generated policy, predicated_reward), true reward
+                advantage = R - predicted_value.item()  # true reward - predicated reward
 
                 # calculate actor (policy) loss
                 policy_losses.append(-log_prob * advantage)
 
                 # calculate critic (value) loss using L1 smooth loss
-                value_losses.append(F.smooth_l1_loss(value, torch.tensor([true_reward_x])))
+                print("----- Predicted Reward: ", predicted_value.item(), " VS Actual reward: ", R.item(), "-----")
+                value_losses.append(F.smooth_l1_loss(predicted_value, torch.tensor([R])))
 
         # reset gradients
         optimizer_actor.zero_grad()
@@ -59,9 +71,9 @@ def main():
         # sum up all the values of policy_losses and value_losses
         loss_actor = torch.stack(policy_losses).sum()
         loss_critic = torch.stack(value_losses).sum()
-        print("The generated policy is: ", generated_policy)
-        print(loss_actor)
-        print(loss_critic)
+        print("----- The generated policy is: ", generated_policy.detach().numpy().ravel(), "-----")
+        # print(loss_actor)
+        # print(loss_critic)
 
         # perform backprop
         loss_actor.backward(retain_graph=True)
@@ -75,15 +87,10 @@ def main():
 
 
 if __name__ == '__main__':
-    # Initialisation, randomly choose 2 actions
-    x_action = np.random.randint(2)
-    y_action = np.random.randint(2)
-
     # choose the environment and the agent
     env = IPD()
     Q_class = TableQAgent()
 
-    init_state = env.get_state_id(x_action, y_action)
     SavedAction = namedtuple('SavedAction', ['log_prob', 'value'])
     gamma = 0.99
     eps = np.finfo(np.float32).eps.item()
@@ -94,9 +101,10 @@ if __name__ == '__main__':
     Actor_class = Actor(input_size_A, hidden_size_A, output_size_A)
     Critic_class = Critic(input_size_C, hidden_size_C, output_size_C)
 
-    optimizer_actor = optim.Adam(Actor_class.parameters(), lr=3e-2)
+    optimizer_actor = optim.Adam(Actor_class.parameters(), lr=3e-2, betas=(0.9, 0.999))
     optimizer_critic = optim.Adam(Critic_class.parameters(), lr=3e-2)
 
-    number_of_episodes = 100
-    length_of_episode = 32 #can be thought of as batch size
+    number_of_episodes = 200
+    # can be thought of as batch size, i.e. how often I want to update the network with the same (state) settings
+    length_of_episode = 1
     main()

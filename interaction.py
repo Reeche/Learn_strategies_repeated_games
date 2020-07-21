@@ -71,7 +71,7 @@ def test_interaction():
     Q_class = TableQAgent()
     # strategy = [0.9, 0.1, 0.9, 0.1] # is approx. 3 - 3
     # strategy = [0.9, 0.9, 0.9, 0.9] # is approx 1 - 4
-    strategy = [0.1, 0.1, 0.1, 0.1] #is approx 1 - 1
+    # strategy = [0.1, 0.1, 0.1, 0.1] #is approx 1 - 1
     # strategy = [0.1071334, 0.21089822 ,0.3707225,  0.3112459 ]
 
     # strategy = [11/13, 1/2, 7/26, 0] #3.65139 -- The average reward for learning agent y:  1.8763999999999998
@@ -79,5 +79,5 @@ def test_interaction():
         reward_x, reward_y = interaction(init_state, Q_class, env, strategy)
         print("The average reward for fixed agent x: ", reward_x, "-- The average reward for learning agent y: ", reward_y)
 
-test_interaction()
+# test_interaction()
 

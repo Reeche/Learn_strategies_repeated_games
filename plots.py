@@ -1,6 +1,30 @@
 import pandas as pd
 import seaborn as sns
-import matplotlib as plt
+import matplotlib.pyplot as plt
+import numpy as np
+
+def plot_actual_predicted_reward(actual_reward, predicted_reward):
+    plt.plot(actual_reward, label='Actual reward')
+    plt.plot(predicted_reward, label='Predicted reward')
+    plt.legend()
+    plt.show()
+
+def plot_policy(policy):
+    for i in range(len(policy)):
+        policy[i] = policy[i].detach().numpy()
+
+    numpy_array = np.array(policy)
+    transpose = numpy_array.T
+    transpose_list = transpose.tolist()
+
+    plt.plot(transpose_list[0], label='P(C|CC)')
+    plt.plot(transpose_list[1], label='P(C|CD)')
+    plt.plot(transpose_list[2], label='P(C|DC)')
+    plt.plot(transpose_list[3], label='P(C|DD)')
+    plt.legend()
+    plt.show()
+
+
 
 #todo: put all plots into one file
 

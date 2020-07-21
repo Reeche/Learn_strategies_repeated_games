@@ -14,12 +14,15 @@ from interaction import interaction
 # todo: set random seeds
 
 def main():
+    i = 0
     for _ in range(number_of_episodes):
         x_action = np.random.randint(2)
         y_action = np.random.randint(2)
         init_state = env.get_state_id(x_action, y_action)
 
         for _ in range(length_of_episode):
+            Q_class = TableQAgent()
+
             # Input the state into the Actor to generate a policy
             generated_policy = Actor_class.forward(torch.FloatTensor([init_state]))
 
@@ -30,7 +33,7 @@ def main():
             Actor_class.saved_actions.append(SavedAction(generated_policy, predicted_reward))
 
             # Training
-            R = 0
+            # R = 0
             saved_actions = Actor_class.saved_actions
             policy_losses = []  # list to save actor (policy) loss
             value_losses = []  # list to save critic (value) loss
@@ -38,27 +41,31 @@ def main():
 
             # calculate the true value using rewards returned from the environment
             true_reward_x, _ = interaction(init_state, Q_class, env, generated_policy)
+            print("GENERATED POLICY: ", generated_policy.detach().numpy().ravel())
+            print("PREDICTED REWARD: ", predicted_reward.item())
+            print("TRUE REWARD: ", true_reward_x)
 
             # Critic observes the actual reward and saves them
-            Critic_class.saved_rewards.append(torch.tensor([true_reward_x]))
+            Critic_class.saved_rewards.append([true_reward_x])
 
             for r in Critic_class.saved_rewards[::-1]:
                 # for i in range(len(Critic_class.saved_rewards)):
                 # calculate the discounted value
-                R = r + gamma * R
+                # R = r + (gamma * R * 0)
                 # print("R", R)
-                returns.insert(0, torch.tensor(R, dtype=torch.float))
+                returns.insert(0, torch.tensor(r, dtype=torch.float))
 
             returns = torch.tensor(returns)
             # if len(returns) > 1:  # to avoid std of 1 value
             #     returns = (returns - returns.mean()) / (returns.std())
-            # print(returns)
+            # print("RETURNS", returns)
 
             for (log_prob, predicted_value), R in zip(saved_actions, returns):  # (generated policy, predicated_reward), true reward
                 advantage = R - predicted_value.item()  # true reward - predicated reward
+                diff = 5 - R
 
                 # calculate actor (policy) loss
-                policy_losses.append(-log_prob * advantage)
+                policy_losses.append(-log_prob * (advantage + diff)) # difference between actual and predicted + difference until maximum reward
 
                 # calculate critic (value) loss using L1 smooth loss
                 print("----- Predicted Reward: ", predicted_value.item(), " VS Actual reward: ", R.item(), "-----")
@@ -71,7 +78,7 @@ def main():
         # sum up all the values of policy_losses and value_losses
         loss_actor = torch.stack(policy_losses).sum()
         loss_critic = torch.stack(value_losses).sum()
-        print("----- The generated policy is: ", generated_policy.detach().numpy().ravel(), "-----")
+        # print("----- The generated policy is: ", generated_policy.detach().numpy().ravel(), "-----")
         # print(loss_actor)
         # print(loss_critic)
 
@@ -85,11 +92,15 @@ def main():
         del Critic_class.saved_rewards[:]
         del Actor_class.saved_actions[:]
 
+        i += 1
+
+        print("######################### END OF EPISODE ", i, "####################################")
+
 
 if __name__ == '__main__':
     # choose the environment and the agent
     env = IPD()
-    Q_class = TableQAgent()
+    # Q_class = TableQAgent()
 
     SavedAction = namedtuple('SavedAction', ['log_prob', 'value'])
     gamma = 0.99
@@ -106,5 +117,5 @@ if __name__ == '__main__':
 
     number_of_episodes = 200
     # can be thought of as batch size, i.e. how often I want to update the network with the same (state) settings
-    length_of_episode = 1
+    length_of_episode = 4
     main()

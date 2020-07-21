@@ -2,8 +2,8 @@ import numpy as np
 from random import choices
 
 class TableQAgent():
-
-    def __init__(self, num_state=4, num_action=2, gamma=0.99, epsilon=0.05, lr=0.001, epsilon_decay=0.999999):
+    # learning rate should be 0.01, epsilon should be 0.25
+    def __init__(self, num_state=4, num_action=2, gamma=0.99, epsilon=0.25, lr=0.01, epsilon_decay=0.999999):
         self.num_state = num_state
         self.num_action = num_action
         self.epsilon = epsilon
@@ -20,17 +20,19 @@ class TableQAgent():
     # self.q = [[20, 10]]
 
     # get action
-    def get_action(self, state):
-        if np.random.random() < self.epsilon:
-            action = np.random.randint(self.num_action)
-            # print('Random action ' + str(action))
-            return action
+    def get_action(self, state, training):
+        if training:
+            if np.random.random() < self.epsilon:
+                action = np.random.randint(self.num_action)
+                # print('Random action ' + str(action))
+                return action
+            else:
+                action = np.argmax(self.q[state])
+                return action
         else:
-            max_q_action = 0
-            for action in range(self.num_action):
-                if self.q[state][action] > self.q[state][max_q_action]:
-                    max_q_action = action
-            return max_q_action
+            action = np.argmax(self.q[state])
+            return action
+
 
     def update(self, state, action, reward, next_state, done=False):
         max_q_action = 0
@@ -45,7 +47,7 @@ class TableQAgent():
         self.epsilon *= self.epsilon_decay
 
     def print_q(self):
-        #print(self.q)
+        print(self.q)
         return self.q
 
     def get_policy(self):
@@ -60,4 +62,3 @@ class TableQAgent():
 
     def set_q(self, q):
         self.q = q
-

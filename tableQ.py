@@ -1,5 +1,7 @@
 import numpy as np
-from random import choices
+from hyperparameters import seed
+
+np.random.seed(seed)
 
 class TableQAgent():
     # learning rate should be 0.01, epsilon should be 0.25

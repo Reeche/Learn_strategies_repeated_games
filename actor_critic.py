@@ -4,7 +4,9 @@ import torch.optim as optim
 import torch.distributions as tdist
 import torch.nn.functional as F
 
-torch.manual_seed(0)
+from hyperparameters import seed
+
+torch.manual_seed(seed)
 criterion = nn.MSELoss()
 
 def get_noise_input_for_actor(size_of_noise):

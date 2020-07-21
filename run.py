@@ -119,3 +119,5 @@ if __name__ == '__main__':
     # can be thought of as batch size, i.e. how often I want to update the network with the same (state) settings
     length_of_episode = 4
     main()
+
+# todo: add plot function

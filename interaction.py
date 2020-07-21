@@ -1,10 +1,12 @@
 import numpy as np
-from random import choices
+import random
+
 from tableQ import TableQAgent
 from env import IPD
+from hyperparameters import seed
 
+random.seed(seed)
 
-# todo: add random seed
 def interaction(init_state, Q_class, env, strategy):
     """
     This function models the interaction between the Actor (policy) and the RL
@@ -26,7 +28,7 @@ def interaction(init_state, Q_class, env, strategy):
             prob = strategy[current_state]
 
             # choose action for both agents
-            x_action = int(choices([0, 1], [prob, 1 - prob])[0])
+            x_action = int(random.choices([0, 1], [prob, 1 - prob])[0])
             y_action = Q_class.get_action(current_state, training=True)
 
             # get the new state depending on the actions
@@ -42,7 +44,7 @@ def interaction(init_state, Q_class, env, strategy):
         for _ in range(0, 1000):
             current_state = next_state
             prob = strategy[current_state]
-            x_action = int(choices([0, 1], [prob, 1 - prob])[0])
+            x_action = int(random.choices([0, 1], [prob, 1 - prob])[0])
             y_action = Q_class.get_action(current_state, training=False)
 
             # update new state
@@ -78,6 +80,4 @@ def test_interaction():
         print("The average reward for fixed agent x: ", reward_x, "-- The average reward for learning agent y: ", reward_y)
 
 test_interaction()
-
-
 

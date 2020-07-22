@@ -27,8 +27,6 @@ def main():
         init_state = env.get_state_id(x_action, y_action)
 
         for _ in range(length_of_episode):
-            Q_class = TableQAgent()
-
             # Input the state into the Actor to generate a policy
             generated_policy = Actor_class.forward(torch.FloatTensor([init_state]))
 
@@ -116,14 +114,14 @@ def main():
 if __name__ == '__main__':
     # choose the environment and the agent
     env = IPD()
-    # Q_class = TableQAgent()
+    Q_class = TableQAgent()
 
     SavedAction = namedtuple('SavedAction', ['log_prob', 'value'])
     gamma = 0.99
     eps = np.finfo(np.float32).eps.item()
 
-    input_size_A, hidden_size_A, output_size_A = 1, 2, 4
-    input_size_C, hidden_size_C, output_size_C = 4, 2, 1
+    input_size_A, hidden_size_A, output_size_A = 1, 32, 4
+    input_size_C, hidden_size_C, output_size_C = 4, 32, 1
 
     Actor_class = Actor(input_size_A, hidden_size_A, output_size_A)
     Critic_class = Critic(input_size_C, hidden_size_C, output_size_C)

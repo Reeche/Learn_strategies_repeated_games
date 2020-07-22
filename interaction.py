@@ -7,6 +7,7 @@ from hyperparameters import seed
 
 random.seed(seed)
 
+
 def interaction(init_state, Q_class, env, strategy):
     """
     This function models the interaction between the Actor (policy) and the RL
@@ -19,7 +20,7 @@ def interaction(init_state, Q_class, env, strategy):
     """
     x_reward = []
     y_reward = []
-    for _ in range(0, 5): #number of trials
+    for _ in range(0, 5):  # number of trials
         Q_class.reset()
         # training
         next_state = init_state
@@ -69,15 +70,19 @@ def test_interaction():
     env = IPD()
     init_state = env.get_state_id(x_action, y_action)
     Q_class = TableQAgent()
-    # strategy = [0.9, 0.1, 0.9, 0.1] # is approx. 3 - 3
-    # strategy = [0.9, 0.9, 0.9, 0.9] # is approx 1 - 4
-    # strategy = [0.1, 0.1, 0.1, 0.1] #is approx 1 - 1
-    # strategy = [0.1071334, 0.21089822 ,0.3707225,  0.3112459 ]
+
+    # epislon 0.15 without decay works well with 200k steps!
+
+    # strategy = [0.9999, 0.1111, 0.9999, 0.1111] # is approx. 3 - 3
+    # strategy = [1., 0., 1., 0.]
+    # strategy = [0.9999, 0.9999, 0.9999, 0.9999]  # is approx 0 - 5-+
+    # strategy = [0.1111, 0.1111, 0.1111, 0.1111] #is approx 1 - 1
 
     # strategy = [11/13, 1/2, 7/26, 0] #3.65139 -- The average reward for learning agent y:  1.8763999999999998
     for _ in range(5):
         reward_x, reward_y = interaction(init_state, Q_class, env, strategy)
-        print("The average reward for fixed agent x: ", reward_x, "-- The average reward for learning agent y: ", reward_y)
+        print("The average reward for fixed agent x: ", reward_x, "-- The average reward for learning agent y: ",
+              reward_y)
+
 
 # test_interaction()
-

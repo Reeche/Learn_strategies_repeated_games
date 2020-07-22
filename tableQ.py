@@ -4,11 +4,12 @@ from hyperparameters import seed
 np.random.seed(seed)
 
 class TableQAgent():
-    # learning rate should be 0.01, epsilon should be 0.25
-    def __init__(self, num_state=4, num_action=2, gamma=0.99, epsilon=0.25, lr=0.01, epsilon_decay=0.999999):
+    # learning rate should be 0.01, epsilon should be 0.15 WITHOUT epsilon_decay
+    def __init__(self, num_state=4, num_action=2, gamma=0.99, epsilon=0.15, lr=0.01, epsilon_decay=1):
         self.num_state = num_state
         self.num_action = num_action
         self.epsilon = epsilon
+        self.inital_epsilon = epsilon
         self.gamma = gamma
         self.lr = lr
         self.epsilon_decay = epsilon_decay
@@ -16,10 +17,9 @@ class TableQAgent():
 
     def reset(self):
         # self.q = [[(np.random.random() - 0.5) * 100 for j in range(self.num_action)] for i in range(self.num_state)]
-        self.q = [[0 for j in range(self.num_action)] for i in range(self.num_state)]
-
-    # self.q = [[1, 0], [99, 100], [0, 1], [99, 100]]
-    # self.q = [[20, 10]]
+        # self.q = [[0 for j in range(self.num_action)] for i in range(self.num_state)]
+        self.q = np.zeros((self.num_state, self.num_action))
+        self.epsilon = self.inital_epsilon
 
     # get action
     def get_action(self, state, training):

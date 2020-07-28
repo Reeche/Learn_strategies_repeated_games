@@ -9,13 +9,13 @@ from hyperparameters import seed
 torch.manual_seed(seed)
 criterion = nn.MSELoss()
 
-def get_noise_input_for_actor(size_of_noise):
-    """
-    :return: Get a random array of size n (int) as input for the Generator/Actor
-    """
-    n = tdist.Normal(torch.tensor([0.]), torch.tensor([1.]))
-    z = torch.t(n.sample((size_of_noise,)))
-    return z
+# def get_noise_input_for_actor(size_of_noise):
+#     """
+#     :return: Get a random array of size n (int) as input for the Generator/Actor
+#     """
+#     n = tdist.Normal(torch.tensor([0.]), torch.tensor([1.]))
+#     z = torch.t(n.sample((size_of_noise,)))
+#     return z
 
 
 class Actor(nn.Module):
@@ -34,16 +34,17 @@ class Actor(nn.Module):
     def forward(self, x):
         x = F.relu(self.map1(x))
         x = F.relu(self.map2(x))
-        x = F.softmax(self.map3(x))
+        #x = torch.sigmoid(self.map3(x)) #has to be sigmoidor anything else between [0, 1]
+        x = F.relu(self.map3(x))
         return x.reshape(-1)
 
-    def update(self, d_score, optimizer):
-        #loss = criterion(d_score, -(torch.tensor([[5]], dtype=torch.float))) #minus in front of the second term for stochastic ascent
-        loss = criterion(d_score, (torch.tensor([[5]], dtype=torch.float)))
-        optimizer.zero_grad()
-        loss.backward(retain_graph=True)
-        optimizer.step()
-        pass
+    # def update(self, d_score, optimizer):
+    #     #loss = criterion(d_score, -(torch.tensor([[5]], dtype=torch.float))) #minus in front of the second term for stochastic ascent
+    #     loss = criterion(d_score, (torch.tensor([[5]], dtype=torch.float)))
+    #     optimizer.zero_grad()
+    #     loss.backward(retain_graph=True)
+    #     optimizer.step()
+    #     pass
 
 
 class Critic(nn.Module):
@@ -62,13 +63,14 @@ class Critic(nn.Module):
     def forward(self, x):
         x = F.relu(self.map1(x))
         x = F.relu(self.map2(x))
-        x = self.map3(x)
+        x = F.relu(self.map3(x))
+        #x = self.map3(x)
         return x
 
-    def update(self, d_score, v_score, optimizer):
-        v_score = torch.tensor([[v_score]], dtype=torch.float)
-        loss = criterion(d_score, v_score)
-        optimizer.zero_grad()
-        loss.backward(retain_graph=True)
-        optimizer.step()
-        pass
+    # def update(self, d_score, v_score, optimizer):
+    #     v_score = torch.tensor([[v_score]], dtype=torch.float)
+    #     loss = criterion(d_score, v_score)
+    #     optimizer.zero_grad()
+    #     loss.backward(retain_graph=True)
+    #     optimizer.step()
+    #     pass

@@ -24,7 +24,7 @@ def interaction(init_state, Q_class, env, strategy):
         Q_class.reset()
         # training
         next_state = init_state
-        for _ in range(0, 150000):
+        for _ in range(0, 200000):
             current_state = next_state
             prob = strategy[current_state]
 

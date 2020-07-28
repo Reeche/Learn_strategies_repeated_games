@@ -7,6 +7,7 @@ def plot_actual_predicted_reward(actual_reward, predicted_reward):
     plt.plot(actual_reward, label='Actual reward')
     plt.plot(predicted_reward, label='Predicted reward')
     plt.legend()
+    plt.savefig('rewards_13.png')
     plt.show()
 
 def plot_policy(policy):
@@ -22,6 +23,7 @@ def plot_policy(policy):
     plt.plot(transpose_list[2], label='P(C|DC)')
     plt.plot(transpose_list[3], label='P(C|DD)')
     plt.legend()
+    plt.savefig('policy_13.png')
     plt.show()
 
 

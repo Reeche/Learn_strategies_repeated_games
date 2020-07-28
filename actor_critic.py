@@ -1,7 +1,5 @@
 import torch
 import torch.nn as nn
-import torch.optim as optim
-import torch.distributions as tdist
 import torch.nn.functional as F
 
 from hyperparameters import seed
@@ -9,19 +7,10 @@ from hyperparameters import seed
 torch.manual_seed(seed)
 criterion = nn.MSELoss()
 
-# def get_noise_input_for_actor(size_of_noise):
-#     """
-#     :return: Get a random array of size n (int) as input for the Generator/Actor
-#     """
-#     n = tdist.Normal(torch.tensor([0.]), torch.tensor([1.]))
-#     z = torch.t(n.sample((size_of_noise,)))
-#     return z
-
 
 class Actor(nn.Module):
     """
-    Aim: Generate dominating strategies
-    takes a random noise as input (scalar) and outputs a policy
+    Aim: takes the current state as input and learn to output an optimal strategy
     """
     def __init__(self, input_size_A, hidden_size_A, output_size_A):
         super(Actor, self).__init__()

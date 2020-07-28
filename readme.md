@@ -1,4 +1,4 @@
-This is an on-going repo on the project: Learning dominant and/or extortionate strategies in repeated two-person matrix games. 
+This is an on-going repo on the project: Learning dominant and/or extortionate strategies in repeated two-person matrix games.
 
 * env.py contains the environments IPD, Chicken, Stag-Hunt
 * actor-critic.py contains the model

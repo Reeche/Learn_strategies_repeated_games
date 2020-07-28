@@ -155,7 +155,7 @@ if __name__ == '__main__':
 
     number_of_episodes = 120
     # can be thought of as batch size, i.e. how often I want to update the network with the same (state) settings
-    length_of_episode = 16  # todo: is this needed?
+    length_of_episode = 16
     predicted_reward_list, actual_reward_list, generated_policy_list = main()
     plot_actual_predicted_reward(predicted_reward_list, actual_reward_list)
     plot_policy(generated_policy_list)

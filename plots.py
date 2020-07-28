@@ -28,7 +28,7 @@ def plot_policy(policy):
 
 
 
-#todo: put all plots into one file
+#todo: tidy up all plots
 
 ### initialisation
 # # 0 means cooperation/Stag/swerve chicken

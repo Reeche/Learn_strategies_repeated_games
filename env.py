@@ -1,8 +1,9 @@
 
 class IPD():
-    #T, R, P, S = [5, 3, 1, 0]
-    # T, R, P, S = [5, 4, 2, 1]
-    #T, R, P, S = [10, 1, -5, -10]
+    """
+    The Iterated Prisoner's Dilemma env
+    """
+
     def __init__(self):
         # 0 = (0, 0) = (C, C);
         # 1 = (0, 1) = (C, D);
@@ -54,6 +55,9 @@ class IPD():
 
 
 class StagHunt():
+    """
+    The Stag-Hunt env
+    """
     def __init__(self):
         # 0 = (0, 0) = (S, S);
         # 1 = (0, 1) = (S, H);
@@ -104,6 +108,10 @@ class StagHunt():
             return ([1, 1])  # HH
 
 class Chicken():
+    """
+    The Chicken env
+    """
+
     def __init__(self):
         # 0 = (0, 0) = (C, C);
         # 1 = (0, 1) = (C, H);

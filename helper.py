@@ -10,6 +10,10 @@ def getstrategy(qtable):
 
 
 def fixedstrategies():
+    """
+    The 16 fixed strategies
+    :return:
+    """
     p_1 = [0, 0, 0, 0]
     p_2 = [0, 0, 0, 1]
     p_3 = [0, 0, 1, 0]

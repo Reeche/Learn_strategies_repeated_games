@@ -21,6 +21,14 @@ jointstate = env.get_state_id(x_action, y_action) # outputs a scalar
 
 
 def twofixed(jointstate, env, x_strategy, y_strategy):
+    """
+    Let two fixed strategies play against each other, e.g. [1, 0, 0, 0] against [0.5, 0.5, 0.5, 0.5]
+    :param jointstate: The joint state of both agents
+    :param env: the environment
+    :param x_strategy: player x's strategy
+    :param y_strategy: player y's strategy
+    :return: average reward for both players
+    """
     x_reward = []
     y_reward = []
     for _ in range(0, 500000): # 500000
